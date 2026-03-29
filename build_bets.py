@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 API_BASE_URL = "https://example-racing-api.com"  # replace with real API
-API_KEY = "YOUR_API_KEY_HERE"  # remove if not needed
+API_KEY = "9d2743d4eemshce50772abe471b4p10044djsneda9425bfa9d"  # remove if not needed
 
 HEADERS = {
     "Accept": "application/json",
