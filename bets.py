@@ -2,108 +2,73 @@ import requests
 import json
 from datetime import datetime
 
-API_KEY = "YOUR_NEW_KEY_HERE"
+API_KEY = "9d2743d4eemshce50772abe471b4p10044djsneda9425bfa9d"
 
-API_BASE_URL = "https://racing-api1.p.rapidapi.com"
+URL = "https://the-racing-api1.p.rapidapi.com/v1/racecards/free"
 
 HEADERS = {
     "X-RapidAPI-Key": API_KEY,
-    "X-RapidAPI-Host": "racing-api1.p.rapidapi.com"
+    "X-RapidAPI-Host": "the-racing-api1.p.rapidapi.com"
 }
 
-def get_today_racecards():
-    url = f"{API_BASE_URL}/racecards"
+PARAMS = {
+    "day": "today",
+    "region_codes": '["gb","ire"]'
+}
+
+def fetch_racecards():
     try:
-        response = requests.get(url, headers=HEADERS, timeout=10)
+        response = requests.get(URL, headers=HEADERS, params=PARAMS)
         response.raise_for_status()
         return response.json()
     except Exception as e:
-        print("Error fetching racecards:", e)
+        print(f"Error fetching racecards: {e}")
         return None
 
-
-def score_horse(horse):
-    """Simple scoring model for best‑bet selection."""
-    score = 0
-
-    # 1. Betting position (if odds exist)
-    if "odds_position" in horse and horse["odds_position"]:
-        if horse["odds_position"] <= 3:
-            score += 3
-
-    # 2. Recent form
-    if "form" in horse and horse["form"]:
-        if any(ch in horse["form"][:3] for ch in ["1", "2"]):
-            score += 2
-
-    # 3. Trainer quality
-    if horse.get("trainer_rating", 0) >= 4:
-        score += 1
-
-    # 4. Jockey quality
-    if horse.get("jockey_rating", 0) >= 4:
-        score += 1
-
-    return score
-
-
-def pick_best_bets(racecards):
+def process_data(data):
+    # Basic example: pick the first horse from each race
     best_bets = []
 
-    for race in racecards.get("races", []):
-        horses = race.get("horses", [])
-        if not horses:
-            continue
-
-        # Score each horse
-        for horse in horses:
-            horse["score"] = score_horse(horse)
-
-        # Pick the top‑scoring horse
-        best = max(horses, key=lambda h: h["score"])
-
-        best_bets.append({
-            "race": race.get("race_name"),
-            "time": race.get("race_time"),
-            "course": race.get("course"),
-            "best_bet": best.get("name"),
-            "score": best.get("score"),
-            "odds": best.get("odds"),
-            "trainer": best.get("trainer"),
-            "jockey": best.get("jockey"),
-        })
+    for meeting in data.get("meetings", []):
+        for race in meeting.get("races", []):
+            if race.get("runners"):
+                horse = race["runners"][0]  # pick first horse for now
+                best_bets.append({
+                    "race": race.get("race_name"),
+                    "time": race.get("race_time"),
+                    "course": meeting.get("course_name"),
+                    "best_bet": horse.get("horse_name"),
+                    "odds": horse.get("odds_decimal"),
+                    "trainer": horse.get("trainer_name"),
+                    "jockey": horse.get("jockey_name")
+                })
 
     return best_bets
 
-
-def save_bets_to_file(data):
-    try:
-        with open("bets.json", "w") as f:
-            json.dump(data, f, indent=4)
-        print("bets.json updated successfully")
-    except Exception as e:
-        print("Error writing bets.json:", e)
-
-
-def main():
-    print("Fetching today's racecards...")
-
-    racecards = get_today_racecards()
-    if not racecards:
-        print("No data received.")
-        return
-
-    best_bets = pick_best_bets(racecards)
-
+def save_json(best_bets, raw):
     output = {
         "updated": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "best_bets": best_bets,
-        "raw_data": racecards
+        "raw_data": raw
     }
 
-    save_bets_to_file(output)
+    with open("bets.json", "w") as f:
+        json.dump(output, f, indent=4)
 
+    print("bets.json updated successfully")
+
+def main():
+    print("Fetching today's racecards...")
+    data = fetch_racecards()
+
+    if not data:
+        print("No data received.")
+        return
+
+    best_bets = process_data(data)
+    save_json(best_bets, data)
 
 if __name__ == "__main__":
     main()
+
 
