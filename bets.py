@@ -2,7 +2,7 @@ import requests
 import json
 from datetime import datetime
 
-API_KEY = "YOUR_NEW_KEY_HERE"
+API_KEY = "9d2743d4eemshce50772abe471b4p10044djsneda9425bfa9d"
 
 API_BASE_URL = "https://racing-api1.p.rapidapi.com"
 
