@@ -1,0 +1,14 @@
+[
+  {
+    "race_time": "14:10",
+    "course": "Example",
+    "horse": "Placeholder Horse",
+    "trainer": "Trainer Name",
+    "yard": "Yard Name",
+    "horse_form": 0.70,
+    "trainer_form": 0.65,
+    "yard_form": 0.60,
+    "score": 0.67,
+    "odds": "4/1"
+  }
+]
