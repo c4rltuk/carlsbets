@@ -7,8 +7,8 @@ API_BASE_URL = "https://racing-api1.p.rapidapi.com"  # replace with real API
 API_KEY = "9d2743d4eemshce50772abe471b4p10044djsneda9425bfa9d"  # remove if not needed
 
 HEADERS = {
-    "Accept": "application/json",
-    # "Authorization": f"Bearer {API_KEY}",
+    "X-RapidAPI-Key": API_KEY,
+    "X-RapidAPI-Host": "racing-api1.p.rapidapi.com"
 }
 
 def get_today_iso():
