@@ -3,7 +3,7 @@ import datetime
 import json
 from pathlib import Path
 
-API_BASE_URL = "https://example-racing-api.com"  # replace with real API
+API_BASE_URL = "https://racing-api1.p.rapidapi.com"  # replace with real API
 API_KEY = "9d2743d4eemshce50772abe471b4p10044djsneda9425bfa9d"  # remove if not needed
 
 HEADERS = {
